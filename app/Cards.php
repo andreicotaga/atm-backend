@@ -19,7 +19,7 @@ class Cards extends Model implements JWTSubject, AuthenticatableContract, Author
      * @var array
      */
     protected $fillable = [
-        'card_number'
+        'card_number', 'first_name', 'last_name', 'balance', 'blocked'
     ];
 
     /**

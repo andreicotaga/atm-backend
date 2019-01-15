@@ -13,14 +13,13 @@
 
 $router->group(
     [
-        'namespace'  => 'Location', 'prefix' => 'location',
         'middleware' => 'CorsMiddleware'
     ],
-    function () use ($router) {
-
+    function () use ($router)
+    {
+        $router->post('/auth/login', 'AuthController@postLogin');
     }
 );
-
 
 
 $router->options(
@@ -32,7 +31,8 @@ $router->options(
         }
     ]
 );
-$router->group(['middleware' => 'CorsMiddleware'], function($router)
+
+$router->group(['middleware' => ['jwt-auth']], function($router)
 {
-    $router->post('/auth/login', 'AuthController@postLogin');
+    $router->get('/me', 'AuthController@getAuthenticatedUser');
 });

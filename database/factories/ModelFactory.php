@@ -14,6 +14,10 @@
 $factory->define(App\Cards::class, function (Faker\Generator $faker) {
     return [
         'card_number' => $faker->unique()->creditCardNumber,
-        'password'    => password_hash('1234', PASSWORD_BCRYPT)
+        'password'    => password_hash('1234', PASSWORD_BCRYPT),
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'balance' => $faker->numberBetween(120, 400),
+        'blocked' => $faker->boolean
     ];
 });

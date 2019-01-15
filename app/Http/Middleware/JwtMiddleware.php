@@ -18,7 +18,9 @@ class JwtMiddleware
 {
     public function handle($request, Closure $next, $guard = null)
     {
-        $token = $request->get('token');
+        $token = explode(' ',$request->header('Authorization'));
+
+        $token = $token[1];
 
         if(!$token) {
             // Unauthorized response if token not there
@@ -38,8 +40,9 @@ class JwtMiddleware
             ], 400);
         }
         $user = Cards::find($credentials->sub);
-        // Now let's put the user in the request class so that you can grab it from there
+
         $request->auth = $user;
+
         return $next($request);
     }
 }
