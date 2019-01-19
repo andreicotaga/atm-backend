@@ -39,13 +39,13 @@ class AuthController extends BaseController
             'password'               => 'required|max:4',
         ]);
 
-        $userCard = Cards::where('card_number', $request->input('card_number'))->first();
+        $userCard = Cards::where('card_number', '=', $request->input('card_number'))->first()->toArray();
 
-        if(!empty($userCard))
+        if(!empty($userCard) && (bool)!$userCard['blocked'])
         {
-            LoginAttemptHandler::log($userCard->id);
+            LoginAttemptHandler::log($userCard['id']);
 
-            if(LoginAttemptHandler::lock($userCard->id))
+            if(LoginAttemptHandler::lock($userCard['id']))
             {
                 return response()->json(['error' => 'You have reached the maximum number of login attempts. Please try again in 3 minutes.'], 404);
             }
@@ -72,7 +72,7 @@ class AuthController extends BaseController
 
         if(!empty($userCard))
         {
-            if((bool)$userCard->blocked)
+            if((bool)$userCard['blocked'])
             {
                 return response()->json(['error' => 'You card was blocked! Please contact customer support.'], 404);
             }
@@ -100,7 +100,6 @@ class AuthController extends BaseController
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
 
             return response()->json(['token_absent'], $e->getStatusCode());
-
         }
 
         return response()->json(compact('user'));

@@ -18,9 +18,10 @@ class JwtMiddleware
 {
     public function handle($request, Closure $next, $guard = null)
     {
-        $token = explode(' ',$request->header('Authorization'));
 
-        $token = $token[1];
+        $token = explode(' ', $request->header('Authorization'));
+
+        $token = !empty($token[0]) ? $token[1] : null;
 
         if(!$token) {
             // Unauthorized response if token not there

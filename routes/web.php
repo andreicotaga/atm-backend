@@ -35,4 +35,10 @@ $router->options(
 $router->group(['middleware' => ['jwt-auth']], function($router)
 {
     $router->get('/me', 'AuthController@getAuthenticatedUser');
+
+    $router->put('/cashier/deposit', 'Operations\CashierOperationsController@deposit');
+    $router->put('/cashier/withdraw', 'Operations\CashierOperationsController@withdraw');
+    $router->put('/cashier/transfer', 'Operations\CashierOperationsController@transfer');
+
+    $router->get('/cashier/transactions', 'Operations\CashierOperationsController@transactions');
 });

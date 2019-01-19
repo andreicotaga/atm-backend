@@ -22,16 +22,19 @@ class LoginAttemptHandler
 
         $result = self::get($cardId);
 
-        $loginAttempt = new \DateTime($result->created_at);
-        $interval = $now->diff($loginAttempt);
-        $minutes = $interval->format('%i');
-
-        if(!empty($result) && $minutes <= 3)
+        if(!empty($result))
         {
-            LoginAttempts::where('card_id', $cardId)
-                ->latest()
-                ->first()
-                ->update(['attempts' => $result->attempts + 1]);
+            $loginAttempt = new \DateTime($result->created_at);
+            $interval = $now->diff($loginAttempt);
+            $minutes = $interval->format('%i');
+
+            if($minutes <= 3)
+            {
+                LoginAttempts::where('card_id', $cardId)
+                    ->latest()
+                    ->first()
+                    ->update(['attempts' => $result->attempts + 1]);
+            }
         }
         else
         {
@@ -63,14 +66,22 @@ class LoginAttemptHandler
      */
     public static function lock($cardId)
     {
-        $attempts = self::get($cardId);
-
         $now = new \DateTime();
 
-        $loginAttempt = new \DateTime($attempts->created_at);
-        $interval = $now->diff($loginAttempt);
-        $minutes = $interval->format('%i');
+        $attempts = self::get($cardId);
 
-        return ($attempts->attempts >= 2 && $minutes <= 3) ? true : false;
+        if(!empty($attempts))
+        {
+            $loginAttempt = new \DateTime($attempts->created_at);
+            $interval = $now->diff($loginAttempt);
+            $minutes = $interval->format('%i');
+
+            if($attempts->attempts >= 2 && $minutes <= 3)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
