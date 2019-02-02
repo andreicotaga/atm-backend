@@ -8,7 +8,6 @@
 
 namespace App\Libraries\Cashier;
 
-use App\Libraries\Http\RequestCriteria\Operations\TransactionsGetRequestCriteria;
 use App\Libraries\Http\RequestCriteria\Operations\TransferPutRequestCriteria;
 use App\Libraries\Http\RequestCriteria\Operations\WithdrawPutRequestCriteria;
 use App\Transactions;
@@ -105,6 +104,14 @@ class CashierManager
         if(!empty($user))
         {
             $currentData = Cards::where('card_number', '=', $user->card_number)->first()->toArray();
+
+            if($criteria->getCardNumber() === $currentData['card_number'])
+            {
+                return [
+                    'status' => 'FAILURE',
+                    'error' => 'You are not allowed to transfer money to your own account!'
+                ];
+            }
 
             if(((float)$currentData['balance'] - (float)$criteria->getAmount()) < -100)
             {

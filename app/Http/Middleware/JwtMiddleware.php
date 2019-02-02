@@ -29,6 +29,7 @@ class JwtMiddleware
                 'error' => 'Token not provided.'
             ], 401);
         }
+
         try {
             $credentials = JWT::decode($token, env('JWT_SECRET'), ['HS256']);
         } catch(ExpiredException $e) {
@@ -40,6 +41,7 @@ class JwtMiddleware
                 'error' => 'An error while decoding token.'
             ], 400);
         }
+
         $user = Cards::find($credentials->sub);
 
         $request->auth = $user;

@@ -35,6 +35,14 @@ class LoginAttemptHandler
                     ->first()
                     ->update(['attempts' => $result->attempts + 1]);
             }
+            else
+            {
+                LoginAttempts::insert([
+                    'card_id' => $cardId,
+                    'created_at' => $now->format('Y-m-d H:i:s'),
+                    'updated_at' => $now->format('Y-m-d H:i:s')
+                ]);
+            }
         }
         else
         {
